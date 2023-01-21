@@ -1,28 +1,8 @@
 
-# Laravel 9.x - Quick Start (Laravel 9.x + Docker)
+# MS CATALOG VIDEO LARAVEL
 
 ## Rodar o Laravel
 
-Clone Repositório
-```sh
-git clone https://github.com/codeedu/micro-admin-videos-php.git laravel9
-```
-
-```sh
-cd laravel9/
-```
-
-
-Alterne de branch
-```sh
-git checkout laravel-9-quick-start
-```
-
-
-Remova o versionamento
-```sh
-rm -rf .git/
-```
 
 
 Crie o Arquivo .env
@@ -33,7 +13,7 @@ cp .env.example .env
 
 Atualize as variáveis de ambiente do arquivo .env
 ```dosini
-APP_NAME="Full Cycle"
+APP_NAME="MS Catalog Video"
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
