@@ -13,11 +13,22 @@ class ListCategoriesUseCaseTest extends TestCase
 
     public function test_list_empty()
     {
+        $responseUseCase = $this->createUseCase();
+        $this->assertCount(0,$responseUseCase->items);
+    }
+
+
+    public function test_list_all()
+    {
+        $categoriesDb = Model::factory()->count(20)->create();
+        $responseUseCase = $this->createUseCase();
+        $this->assertCount(15,$responseUseCase->items);
+        $this->assertEquals(count($categoriesDb),$responseUseCase->total);
+    }
+
+    protected function createUseCase() {
         $repository = new CategoryEloquentRepository(new Model());
         $useCase = new ListCategoriesUseCase($repository);
-        $response = $useCase->execute(new CategoriesListInputDto());
-
-        $this->assertCount(0,$response->items);
-
+        return $useCase->execute(new CategoriesListInputDto());
     }
 }
