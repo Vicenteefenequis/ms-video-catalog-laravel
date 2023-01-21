@@ -44,8 +44,8 @@ class CategoryEloquentRepositoryTest extends TestCase
 
         $response = $this->repository->findById($category->id);
 
-        $this->assertInstanceOf(EntityCategory::class,$response);
-        $this->assertEquals($category->id,$response->id());
+        $this->assertInstanceOf(EntityCategory::class, $response);
+        $this->assertEquals($category->id, $response->id());
     }
 
     public function testFindNotFound()
@@ -53,8 +53,19 @@ class CategoryEloquentRepositoryTest extends TestCase
         try {
             $this->repository->findById('fakeValue');
             $this->fail();
-        } catch(Throwable $th) {
-            $this->assertInstanceOf(NotFoundException::class,$th);
+        } catch (Throwable $th) {
+            $this->assertInstanceOf(NotFoundException::class, $th);
         }
     }
+
+
+    public function testFindAll()
+    {
+        Model::factory()->count(10)->create();
+
+        $response = $this->repository->findAll();
+
+        $this->assertCount(10, $response);
+    }
+
 }
