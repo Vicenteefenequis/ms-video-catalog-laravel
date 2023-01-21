@@ -35,8 +35,10 @@ class CategoryControllerUnitTest extends TestCase
         $response = $controller->index($mockRequest, $mockUseCase);
 
 
-        dump($response);
         $this->assertIsObject($response->resource);
         $this->assertArrayHasKey('meta',$response->additional);
+
+
+        Mockery::close();
     }
 }
