@@ -99,10 +99,16 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
 
     private function toCategory(object $object): CategoryEntity
     {
-        return new CategoryEntity(
+        $entity = new CategoryEntity(
             id: $object->id,
-            name: $object->name
+            name: $object->name,
+            description: $object->description,
+
         );
+
+        ((bool)$object->is_active) ? $entity->activate() : $entity->disable();
+
+        return $entity;
     }
 }
 
