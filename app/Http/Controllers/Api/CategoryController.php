@@ -59,7 +59,8 @@ class CategoryController extends Controller
             )
         );
 
-        return (new CategoryResource(collect($response)))
+
+        return (new CategoryResource($response))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
 
@@ -80,7 +81,7 @@ class CategoryController extends Controller
             name: $request->name
         ));
 
-        return (new CategoryResource(collect($category)))
+        return (new CategoryResource($category))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
