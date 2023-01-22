@@ -57,15 +57,12 @@ class CategoryApiTest extends TestCase
 
         $response->assertStatus(200);
 
-        $this->assertEquals(2,$response['meta']['current_page']);
+        $this->assertEquals(2, $response['meta']['current_page']);
     }
 
     public function test_list_category_notfound()
     {
         $response = $this->getJson("$this->endpoint/fake_value");
-
-        $response->dump();
-
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -91,14 +88,39 @@ class CategoryApiTest extends TestCase
     public function test_validation_store()
     {
         $data = [];
-        $response = $this->postJson($this->endpoint,$data);
 
-        $response->dump();
+        $response = $this->postJson($this->endpoint, $data);
+
+
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
         $response->assertJsonStructure([
             'message',
             'errors' => [
                 'name'
+            ]
+        ]);
+
+    }
+
+    public function test_store()
+    {
+        $data = [
+            'name' => 'New Category'
+        ];
+
+        $response = $this->postJson($this->endpoint,$data);
+
+        $response->dump();
+
+        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'name',
+                'description',
+                'is_active',
+                'created_at'
             ]
         ]);
     }
