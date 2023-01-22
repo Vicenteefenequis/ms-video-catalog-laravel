@@ -49,7 +49,7 @@ class Handler extends ExceptionHandler
 
 
         if ($exception instanceof EntityValidationException)
-            return $this->showError($exception->getMessage(), Response::HTTP_FORBIDDEN);
+            return $this->showError($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
         return parent::render($request,$exception);
 
