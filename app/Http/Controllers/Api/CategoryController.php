@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use Core\UseCase\DTO\Category\CategoryListInputDto;
 use Core\UseCase\DTO\Category\CreateCategory\CategoryCreateInputDto;
 use Core\UseCase\DTO\Category\ListCategories\CategoriesListInputDto;
-use Core\UseCase\Category\{CreateCategoryUseCase, ListCategoriesUseCase};
+use Core\UseCase\Category\{CreateCategoryUseCase, ListCategoriesUseCase, ListCategoryUseCase};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -43,7 +44,7 @@ class CategoryController extends Controller
             input: new CategoryCreateInputDto(
                 name: $request->name,
                 description: $request->description ?? "",
-                isActive: (bool) $request->is_active ?? true,
+                isActive: (bool)$request->is_active ?? true,
             )
         );
 
@@ -51,5 +52,13 @@ class CategoryController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
 
+    }
+
+    public function show(ListCategoryUseCase $useCase, $id)
+    {
+        $category = $useCase->execute(new CategoryListInputDto($id));
+        return (new CategoryResource(collect($category)))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }
