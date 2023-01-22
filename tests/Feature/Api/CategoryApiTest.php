@@ -109,7 +109,7 @@ class CategoryApiTest extends TestCase
             'name' => 'New Category'
         ];
 
-        $response = $this->postJson($this->endpoint,$data);
+        $response = $this->postJson($this->endpoint, $data);
 
         $response->dump();
 
@@ -123,5 +123,24 @@ class CategoryApiTest extends TestCase
                 'created_at'
             ]
         ]);
+
+        $response = $this->postJson($this->endpoint, [
+            'name' => 'New Cat',
+            'description' => 'New Desc',
+            'is_active' => false
+        ]);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+
+        $this->assertEquals('New Desc', $response['data']['description']);
+        $this->assertEquals('New Cat', $response['data']['name']);
+        $this->assertFalse($response['data']['is_active']);
+        $this->assertDatabaseHas('categories', [
+            'id' => $response['data']['id'],
+            'name' => $response['data']['name'],
+            'description' => $response['data']['description'],
+            'is_active' => $response['data']['is_active']
+        ]);
     }
+
 }
