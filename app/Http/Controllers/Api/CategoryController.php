@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoryRequest;
+use Core\UseCase\DTO\Category\UpdateCategory\UpdateCategoryInputDto;
+use App\Http\Requests\{
+    StoreCategoryRequest,
+    UpdateCategoryRequest
+};
 use App\Http\Resources\CategoryResource;
 use Core\UseCase\DTO\Category\CategoryListInputDto;
 use Core\UseCase\DTO\Category\CreateCategory\CategoryCreateInputDto;
 use Core\UseCase\DTO\Category\ListCategories\CategoriesListInputDto;
-use Core\UseCase\Category\{CreateCategoryUseCase, ListCategoriesUseCase, ListCategoryUseCase};
+use Core\UseCase\Category\{CreateCategoryUseCase, ListCategoriesUseCase, ListCategoryUseCase, UpdateCategoryUseCase};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -61,4 +65,17 @@ class CategoryController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
+    public function update(UpdateCategoryRequest $request, UpdateCategoryUseCase $useCase, $id)
+    {
+        $category = $useCase->execute(new UpdateCategoryInputDto(
+            id: $id,
+            name: $request->name
+        ));
+
+        return (new CategoryResource(collect($category)))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
+    }
+
 }
