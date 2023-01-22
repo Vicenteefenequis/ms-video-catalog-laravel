@@ -23,7 +23,7 @@ class ListCategoriesUseCaseUnitTest extends TestCase
         $mockPagination = $this->mockPagination();
 
         $this->mockRepo = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
-        $this->mockRepo->shouldReceive('paginate')->andReturn($mockPagination);
+        $this->mockRepo->shouldReceive('paginate')->once()->andReturn($mockPagination);
 
         $this->mockInputDto = Mockery::mock(CategoriesListInputDto::class, ['filter', 'desc']);
 
@@ -33,17 +33,6 @@ class ListCategoriesUseCaseUnitTest extends TestCase
 
         $this->assertInstanceOf(CategoriesListOutputDto::class, $response);
         $this->assertCount(0, $response->items);
-
-        /**
-         * Spies
-         */
-
-
-        $this->spy = Mockery::spy(stdClass::class, CategoryRepositoryInterface::class);
-        $this->spy->shouldReceive('paginate')->andReturn($mockPagination);
-        $useCase = new ListCategoriesUseCase($this->spy);
-        $useCase->execute($this->mockInputDto);
-        $this->spy->shouldHaveReceived('paginate');
     }
 
 
@@ -85,6 +74,7 @@ class ListCategoriesUseCaseUnitTest extends TestCase
         $this->mockPagination = Mockery::mock(stdClass::class, PaginationInterface::class);
         $this->mockPagination->shouldReceive('items')->andReturn($items);
         $this->mockPagination->shouldReceive('total')->andReturn(0);
+        $this->mockPagination->shouldReceive('currentPage')->andReturn(0);
         $this->mockPagination->shouldReceive('firstPage')->andReturn(0);
         $this->mockPagination->shouldReceive('lastPage')->andReturn(0);
         $this->mockPagination->shouldReceive('perPage')->andReturn(0);
