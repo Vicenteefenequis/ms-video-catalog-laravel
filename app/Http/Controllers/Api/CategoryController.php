@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Core\UseCase\DTO\Category\DeleteCategory\DeleteCategoryInputDto;
 use Core\UseCase\DTO\Category\UpdateCategory\UpdateCategoryInputDto;
 use App\Http\Requests\{
     StoreCategoryRequest,
@@ -12,7 +13,12 @@ use App\Http\Resources\CategoryResource;
 use Core\UseCase\DTO\Category\CategoryListInputDto;
 use Core\UseCase\DTO\Category\CreateCategory\CategoryCreateInputDto;
 use Core\UseCase\DTO\Category\ListCategories\CategoriesListInputDto;
-use Core\UseCase\Category\{CreateCategoryUseCase, ListCategoriesUseCase, ListCategoryUseCase, UpdateCategoryUseCase};
+use Core\UseCase\Category\{CreateCategoryUseCase,
+    DeleteCategoryUseCase,
+    ListCategoriesUseCase,
+    ListCategoryUseCase,
+    UpdateCategoryUseCase
+};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -76,6 +82,12 @@ class CategoryController extends Controller
         return (new CategoryResource(collect($category)))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function destroy(DeleteCategoryUseCase $useCase, $id)
+    {
+        $useCase->execute(new DeleteCategoryInputDto(id: $id));
+        return response()->noContent();
     }
 
 }
