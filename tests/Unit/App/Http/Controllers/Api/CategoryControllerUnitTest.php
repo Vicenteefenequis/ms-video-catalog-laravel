@@ -25,7 +25,7 @@ class CategoryControllerUnitTest extends TestCase
             ->andReturn('test');
 
         $mockDtoOutput = Mockery::mock(CategoriesListOutputDto::class, [
-            [], 1, 1, 1, 1, 1, 1,
+            [], 1, 1, 1, 1, 1, 1, 1,
         ]);
 
         $mockUseCase = Mockery::mock(ListCategoriesUseCase::class);
@@ -36,7 +36,7 @@ class CategoryControllerUnitTest extends TestCase
 
 
         $this->assertIsObject($response->resource);
-        $this->assertArrayHasKey('meta',$response->additional);
+        $this->assertArrayHasKey('meta', $response->additional);
 
 
         Mockery::close();
