@@ -13,12 +13,11 @@ class Genre
 {
     use MethodsMagicsTrait;
 
-    protected array $categoriesId = [];
-
     public function __construct(
         protected string    $name,
         protected ?Uuid     $id = null,
         protected bool      $isActive = true,
+        protected array     $categoriesId = [],
         protected ?DateTime $createdAt = null
     )
     {
@@ -48,7 +47,14 @@ class Genre
 
     public function addCategory(string $categoryId): void
     {
-        array_push($this->categoriesId,$categoryId);
+        $this->categoriesId[] = $categoryId;
+    }
+
+    public function removeCategory(string $categoryId): void
+    {
+        $this->categoriesId = array_filter($this->categoriesId, function ($element) use ($categoryId) {
+            return $element !== $categoryId;
+        });
     }
 
 
