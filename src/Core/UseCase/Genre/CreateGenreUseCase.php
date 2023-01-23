@@ -41,6 +41,9 @@ class CreateGenreUseCase
             $this->validateCategoriesId($input->categoriesId);
 
             $genreDb = $this->repository->insert($genre);
+
+            $this->transaction->commit();
+
             return new GenreCreateOutputDto(
                 id: (string)$genreDb->id,
                 name: $genreDb->name,
@@ -48,7 +51,7 @@ class CreateGenreUseCase
                 created_at: $genreDb->createdAt(),
             );
 
-            $this->transaction->commit();
+
         } catch (\Throwable $th) {
 
             $this->transaction->rollback();
@@ -60,8 +63,16 @@ class CreateGenreUseCase
     {
         $categoriesDb = $this->categoryRepository->getIdsListIds($categoriesId);
 
-        if(count($categoriesDb) !== count($categoriesId)) {
-            throw new NotFoundException('Categories Not Found');
+        $arrayDiff = array_diff($categoriesId,$categoriesDb);
+
+        if(count($arrayDiff)) {
+            $msg = sprintf(
+                '%s %s not found',
+                count($arrayDiff) > 1 ? 'Categories' : 'Category',
+                implode(', ',$arrayDiff)
+            );
+
+            throw new NotFoundException($msg);
         }
     }
 }
