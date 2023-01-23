@@ -3,6 +3,7 @@
 namespace Tests\Unit\Domain\Entity;
 
 use Core\Domain\Entity\Genre;
+use Core\Domain\Exception\EntityValidationException;
 use Core\Domain\ValueObject\Uuid;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -13,7 +14,7 @@ class GenreUnitTest extends TestCase
 
     public function testAttributes()
     {
-        $uuid = (string) RamseyUuid::uuid4();
+        $uuid = (string)RamseyUuid::uuid4();
         $date = date('Y-m-d H:i:s');
 
         $genre = new Genre(
@@ -23,10 +24,10 @@ class GenreUnitTest extends TestCase
             createdAt: new DateTime($date),
         );
 
-        $this->assertEquals($uuid,$genre->id());
-        $this->assertEquals('New Genre',$genre->name);
+        $this->assertEquals($uuid, $genre->id());
+        $this->assertEquals('New Genre', $genre->name);
         $this->assertTrue($genre->isActive);
-        $this->assertEquals($date,$genre->createdAt());
+        $this->assertEquals($date, $genre->createdAt());
     }
 
     public function testAttributesCreate()
@@ -37,7 +38,7 @@ class GenreUnitTest extends TestCase
         );
 
         $this->assertNotEmpty($genre->id());
-        $this->assertEquals('New Genre',$genre->name);
+        $this->assertEquals('New Genre', $genre->name);
         $this->assertTrue($genre->isActive);
         $this->assertNotEmpty($genre->createdAt());
     }
@@ -55,7 +56,8 @@ class GenreUnitTest extends TestCase
         $this->assertFalse($genre->isActive);
     }
 
-    public function testActivate() {
+    public function testActivate()
+    {
         $genre = new Genre(
             name: 'Test',
             isActive: false
@@ -68,17 +70,39 @@ class GenreUnitTest extends TestCase
         $this->assertTrue($genre->isActive);
     }
 
-    public function testUpdate() {
+    public function testUpdate()
+    {
         $genre = new Genre(
             name: 'Test'
         );
 
-        $this->assertEquals('Test',$genre->name);
+        $this->assertEquals('Test', $genre->name);
 
         $genre->update(
             name: 'Test Updated'
         );
 
-        $this->assertEquals('Test Updated',$genre->name);
+        $this->assertEquals('Test Updated', $genre->name);
     }
+
+    public function testEntityExceptions()
+    {
+        $this->expectException(EntityValidationException::class);
+
+        new Genre(
+            name: 'T'
+        );
+    }
+
+    public function testEntityUpdateException()
+    {
+        $this->expectException(EntityValidationException::class);
+
+        $genre = new Genre(
+            name: 'Teste'
+        );
+
+        $genre->update('T');
+    }
+
 }
