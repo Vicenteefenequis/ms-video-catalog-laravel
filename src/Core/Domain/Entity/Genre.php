@@ -21,4 +21,15 @@ class Genre
         $this->id = $this->id ?? Uuid::random();
         $this->createdAt = $this->createdAt ?? new DateTime();
     }
+
+
+    public function deactivate(): void
+    {
+        $this->isActive = false;
+    }
+
+    public function activate(): void
+    {
+        $this->isActive = true;
+    }
 }
