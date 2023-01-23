@@ -126,9 +126,33 @@ class GenreUnitTest extends TestCase
         );
 
 
-        dump(count($genre->categoriesId));
+        $this->assertCount(2, $genre->categoriesId);
+    }
+
+
+    public function testRemoteCategoryToGenre()
+    {
+        $categoryId = (string)RamseyUuid::uuid4();
+        $categoryId2 = (string)RamseyUuid::uuid4();
+
+        $genre = new Genre(
+            name: 'new genre',
+            categoriesId: [
+                $categoryId,
+                $categoryId2
+            ]
+        );
+
 
         $this->assertCount(2, $genre->categoriesId);
+
+        $genre->removeCategory(
+            categoryId: $categoryId
+        );
+
+        $this->assertCount(1, $genre->categoriesId);
+        $this->assertContains($categoryId2,$genre->categoriesId);
+        $this->assertNotContains($categoryId,$genre->categoriesId);
     }
 
 }
