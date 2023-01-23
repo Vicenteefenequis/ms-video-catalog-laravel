@@ -7,6 +7,7 @@ use Core\Domain\Repository\{
     CategoryRepositoryInterface,
     GenreRepositoryInterface
 };
+use Core\Domain\Exception\NotFoundException;
 use Core\Domain\ValueObject\Uuid as ValueObjectUuid;
 use Core\UseCase\Genre\CreateGenreUseCase;
 use Core\UseCase\DTO\Genre\Create\{
@@ -30,38 +31,75 @@ class CreateGenreUseCaseUnitTest extends TestCase
     {
 
         $uuid = (string)Uuid::uuid4();
+        $useCase = new CreateGenreUseCase($this->mockRepository($uuid), $this->mockCategoryRepository($uuid), $this->mockTransaction());
+        $response = $useCase->execute($this->mockInputDto([$uuid]));
 
-        $this->mockEntity = Mockery::mock(Genre::class, [
+        $this->assertInstanceOf(GenreCreateOutputDto::class, $response);
+
+    }
+
+    public function test_create_exceptions()
+    {
+        $this->expectException(NotFoundException::class);
+        $uuid = (string)Uuid::uuid4();
+
+        $useCase = new CreateGenreUseCase($this->mockRepository($uuid), $this->mockCategoryRepository($uuid), $this->mockTransaction());
+
+        $response = $useCase->execute($this->mockInputDto([$uuid,'fake_id']));
+
+        $this->assertInstanceOf(GenreCreateOutputDto::class, $response);
+
+    }
+
+    private function mockEntity(string $uuid)
+    {
+        $mockEntity = Mockery::mock(Genre::class, [
             'teste',
             new ValueObjectUuid($uuid),
             true,
             []
         ]);
-        $this->mockEntity->shouldReceive('createdAt')->andReturn(date('Y-m-d H:i:s'));
+        $mockEntity->shouldReceive('createdAt')->andReturn(date('Y-m-d H:i:s'));
 
-        $this->mockRepo = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $this->mockRepo->shouldReceive('insert')->andReturn($this->mockEntity);
+        return $mockEntity;
+    }
 
+    private function mockRepository(string $uuid)
+    {
+        $mockRepo = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
+        $mockRepo->shouldReceive('insert')->andReturn($this->mockEntity($uuid));
+        return $mockRepo;
+    }
 
-        $this->mockTransaction = Mockery::mock(stdClass::class, TransactionInterface::class);
-        $this->mockTransaction->shouldReceive('commit');
-        $this->mockTransaction->shouldReceive('rollback');
+    private function mockTransaction()
+    {
+        $mockTransaction = Mockery::mock(stdClass::class, TransactionInterface::class);
+        $mockTransaction->shouldReceive('commit');
+        $mockTransaction->shouldReceive('rollback');
+        return $mockTransaction;
+    }
 
-        $this->mockRepoCategory = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
-        $this->mockRepoCategory->shouldReceive('getIdsListIds')->andReturn([$uuid]);
-
-        $useCase = new CreateGenreUseCase($this->mockRepo, $this->mockRepoCategory, $this->mockTransaction);
-
-        $this->mockInputDto = Mockery::mock(GenreCreateInputDto::class, [
+    private function mockInputDto(array $categoriesIds)
+    {
+        return Mockery::mock(GenreCreateInputDto::class, [
             'name',
-            [$uuid],
+            $categoriesIds,
             true
         ]);
+    }
 
-        $response = $useCase->execute($this->mockInputDto);
+    public  function mockCategoryRepository(string $uuid)
+    {
+        $mockRepoCategory = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
+        $mockRepoCategory->shouldReceive('getIdsListIds')->andReturn([$uuid]);
 
-        $this->assertInstanceOf(GenreCreateOutputDto::class, $response);
+        return $mockRepoCategory;
+    }
 
+
+    protected function tearDown(): void
+    {
         Mockery::close();
+        parent::tearDown();
     }
 }
