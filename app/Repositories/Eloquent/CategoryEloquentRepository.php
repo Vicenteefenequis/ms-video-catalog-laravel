@@ -113,7 +113,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
 
     public function getIdsListIds(array $categoriesId = []): array
     {
-        return $this->model->whereIn('id', $categoriesId)->get()->pluck('id');
+        return $this->model->whereIn('id', $categoriesId)->pluck('id')->toArray();
     }
 }
 
