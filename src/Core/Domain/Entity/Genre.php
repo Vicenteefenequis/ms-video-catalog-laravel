@@ -32,4 +32,9 @@ class Genre
     {
         $this->isActive = true;
     }
+
+    public function update(string $name): void
+    {
+        $this->name = $name;
+    }
 }
