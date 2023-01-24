@@ -9,6 +9,7 @@ use Core\Domain\Entity\Genre as Entity;
 use App\Repositories\Eloquent\GenreEloquentRepository;
 use Core\Domain\Exception\NotFoundException;
 use Core\Domain\Repository\GenreRepositoryInterface;
+use Core\Domain\ValueObject\Uuid;
 use Tests\TestCase;
 
 class GenreEloquentRepositoryTest extends TestCase
@@ -153,6 +154,28 @@ class GenreEloquentRepositoryTest extends TestCase
         $this->assertCount(0, $response->items());
         $this->assertEquals(0,$response->total());
 
+    }
+
+    public function test_update()
+    {
+        $genre = Model::factory()->create();
+
+        $entity = new Entity(
+            name: $genre->name,
+            id: new Uuid($genre->id),
+            isActive: $genre->is_active,
+            createdAt: new \DateTime($genre->created_at)
+        );
+
+        $entity->update(name: 'Name Updated');
+
+        $response = $this->repository->update($entity);
+
+        $this->assertEquals('Name Updated',$response->name);
+
+        $this->assertDatabaseHas('genres',[
+            'name' => 'Name Updated'
+        ]);
     }
 
 }
