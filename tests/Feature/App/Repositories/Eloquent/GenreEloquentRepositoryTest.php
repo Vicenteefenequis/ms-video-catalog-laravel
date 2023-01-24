@@ -3,9 +3,11 @@
 namespace Tests\Feature\App\Repositories\Eloquent;
 
 use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Genre as Model;
 use Core\Domain\Entity\Genre as Entity;
 use App\Repositories\Eloquent\GenreEloquentRepository;
+use Core\Domain\Exception\NotFoundException;
 use Core\Domain\Repository\GenreRepositoryInterface;
 use Tests\TestCase;
 
@@ -21,7 +23,7 @@ class GenreEloquentRepositoryTest extends TestCase
 
     public function test_implements_interface()
     {
-        $this->assertInstanceOf(GenreRepositoryInterface::class,$this->repository);
+        $this->assertInstanceOf(GenreRepositoryInterface::class, $this->repository);
     }
 
     public function test_insert()
@@ -29,11 +31,11 @@ class GenreEloquentRepositoryTest extends TestCase
         $entity = new Entity(name: 'Genre');
         $response = $this->repository->insert($entity);
 
-        $this->assertEquals($entity->name,$response->name);
-        $this->assertEquals($entity->id(),$response->id());
+        $this->assertEquals($entity->name, $response->name);
+        $this->assertEquals($entity->id(), $response->id());
         $this->assertTrue($response->isActive);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $entity->id(),
             'name' => $entity->name,
             'is_active' => $entity->isActive
@@ -46,11 +48,11 @@ class GenreEloquentRepositoryTest extends TestCase
         $entity->deactivate();
         $response = $this->repository->insert($entity);
 
-        $this->assertEquals($entity->name,$response->name);
-        $this->assertEquals($entity->id(),$response->id());
+        $this->assertEquals($entity->name, $response->name);
+        $this->assertEquals($entity->id(), $response->id());
         $this->assertFalse($response->isActive);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $entity->id(),
             'name' => $entity->name,
             'is_active' => $entity->isActive
@@ -69,12 +71,34 @@ class GenreEloquentRepositoryTest extends TestCase
 
         $response = $this->repository->insert($entity);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $response->id()
         ]);
 
 
-        $this->assertDatabaseCount('categories',count($entity->categoriesId));
+        $this->assertDatabaseCount('categories', count($entity->categoriesId));
+
+    }
+
+    public function test_not_found()
+    {
+        $genreId = 'fake_id';
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Genre fake_id not found');
+
+        $this->repository->findById($genreId);
+    }
+
+
+    public function test_find_by_id()
+    {
+        $genre = Genre::factory()->create();
+
+        $response = $this->repository->findById($genre->id);
+
+        $this->assertEquals($genre->id,$response->id());
+        $this->assertEquals($genre->name,$response->name);
+        $this->assertTrue($response->isActive);
 
     }
 }
