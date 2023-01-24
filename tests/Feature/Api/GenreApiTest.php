@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api;
 
 use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Genre as Model;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -77,6 +78,30 @@ class GenreApiTest extends TestCase
             'message',
             'errors' => [
                 'name'
+            ]
+        ]);
+    }
+
+    public function test_show_not_found()
+    {
+        $response = $this->getJson("$this->endpoint/fake_id");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_show()
+    {
+        $genre = Genre::factory()->create();
+
+        $response = $this->getJson("$this->endpoint/$genre->id");
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'name',
+                'is_active'
             ]
         ]);
     }
