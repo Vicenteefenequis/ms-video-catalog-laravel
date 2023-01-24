@@ -178,4 +178,21 @@ class GenreEloquentRepositoryTest extends TestCase
         ]);
     }
 
+    public function test_update_not_found()
+    {
+        $entity = new Entity(
+            name: 'any_name',
+        );
+
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage("Genre $entity->id not found");
+
+
+
+        $entity->update(name: 'Name Updated');
+
+        $this->repository->update($entity);
+
+    }
+
 }
