@@ -107,4 +107,39 @@ class GenreApiTest extends TestCase
     }
 
 
+    public function test_update_not_found()
+    {
+        $categories = Category::factory()->count(2)->create();
+
+        $response = $this->putJson("$this->endpoint/fake_id", [
+            'name' => 'new name to update',
+            'categories_ids' => $categories->pluck('id')->toArray(),
+        ]);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+    }
+
+    public function test_update()
+    {
+        $genre = Genre::factory()->create();
+        $categories = Category::factory()->count(10)->create();
+
+        $response = $this->putJson("$this->endpoint/$genre->id", [
+            'name' => 'new name to update',
+            'categories_ids' => $categories->pluck('id')->toArray(),
+        ]);
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'name',
+                'is_active'
+            ]
+        ]);
+
+    }
+
 }
