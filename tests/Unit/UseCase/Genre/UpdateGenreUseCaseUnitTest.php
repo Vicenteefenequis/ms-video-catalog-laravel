@@ -36,7 +36,7 @@ class UpdateGenreUseCaseUnitTest extends TestCase
         $this->expectException(NotFoundException::class);
         $uuid = (string)Uuid::uuid4();
 
-        $useCase = new UpdateGenreUseCase($this->mockRepository($uuid), $this->mockCategoryRepository($uuid), $this->mockTransaction());
+        $useCase = new UpdateGenreUseCase($this->mockRepository($uuid,0), $this->mockCategoryRepository($uuid), $this->mockTransaction());
 
         $response = $useCase->execute($this->mockInputDto($uuid, [$uuid, 'fake_id']));
 
@@ -59,11 +59,11 @@ class UpdateGenreUseCaseUnitTest extends TestCase
         return $mockEntity;
     }
 
-    private function mockRepository(string $uuid)
+    private function mockRepository(string $uuid,int $timesCalled = 1)
     {
         $mockRepo = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $mockRepo->shouldReceive('findById')->andReturn($this->mockEntity($uuid));
-        $mockRepo->shouldReceive('update')->andReturn($this->mockEntity($uuid));
+        $mockRepo->shouldReceive('findById')->once()->with($uuid)->andReturn($this->mockEntity($uuid));
+        $mockRepo->shouldReceive('update')->times($timesCalled)->andReturn($this->mockEntity($uuid));
         return $mockRepo;
     }
 
@@ -88,7 +88,7 @@ class UpdateGenreUseCaseUnitTest extends TestCase
     public function mockCategoryRepository(string $uuid)
     {
         $mockRepoCategory = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
-        $mockRepoCategory->shouldReceive('getIdsListIds')->andReturn([$uuid]);
+        $mockRepoCategory->shouldReceive('getIdsListIds')->once()->andReturn([$uuid]);
 
         return $mockRepoCategory;
     }

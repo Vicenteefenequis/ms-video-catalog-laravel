@@ -16,30 +16,32 @@ class DeleteGenreUseCaseUnitTest extends TestCase
 
     public function test_delete()
     {
+        $uuid = (string)Uuid::uuid4();
         $this->mockRepo = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $this->mockRepo->shouldReceive('delete')->andReturn(true);
+        $this->mockRepo->shouldReceive('delete')->with($uuid)->once()->andReturn(true);
 
         $useCase = new DeleteGenreUseCase($this->mockRepo);
 
-        $this->mockInputDto = Mockery::mock(GenreInputDto::class,[
-            (string)Uuid::uuid4()
+        $this->mockInputDto = Mockery::mock(GenreInputDto::class, [
+            $uuid
         ]);
 
         $response = $useCase->execute($this->mockInputDto);
 
-        $this->assertInstanceOf(DeleteGenreOutputDto::class,$response);
+        $this->assertInstanceOf(DeleteGenreOutputDto::class, $response);
         $this->assertTrue($response->success);
     }
 
     public function test_delete_returns_false()
     {
+        $uuid = (string)Uuid::uuid4();
         $this->mockRepo = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $this->mockRepo->shouldReceive('delete')->andReturn(false);
+        $this->mockRepo->shouldReceive('delete')->with($uuid)->once()->andReturn(false);
 
         $useCase = new DeleteGenreUseCase($this->mockRepo);
 
-        $this->mockInputDto = Mockery::mock(GenreInputDto::class,[
-            (string)Uuid::uuid4()
+        $this->mockInputDto = Mockery::mock(GenreInputDto::class, [
+            $uuid
         ]);
 
         $response = $useCase->execute($this->mockInputDto);

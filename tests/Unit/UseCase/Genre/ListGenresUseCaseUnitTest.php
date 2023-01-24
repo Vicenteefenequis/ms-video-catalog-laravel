@@ -21,7 +21,7 @@ class ListGenresUseCaseUnitTest extends TestCase
     public function test_usecase()
     {
         $this->mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $this->mockRepository->shouldReceive('paginate')->andReturn($this->mockPagination());
+        $this->mockRepository->shouldReceive('paginate')->once()->andReturn($this->mockPagination());
 
         $this->mockDtoInput = Mockery::mock(ListGenresInputDto::class, [
             'teste', 'desc', 1, 15
@@ -33,6 +33,8 @@ class ListGenresUseCaseUnitTest extends TestCase
         $this->assertInstanceOf(ListGenresOutputDto::class,$reponse);
 
         Mockery::close();
+
+
     }
 
 
