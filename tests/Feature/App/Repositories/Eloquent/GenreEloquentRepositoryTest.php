@@ -97,8 +97,8 @@ class GenreEloquentRepositoryTest extends TestCase
 
         $response = $this->repository->findById($genre->id);
 
-        $this->assertEquals($genre->id,$response->id());
-        $this->assertEquals($genre->name,$response->name);
+        $this->assertEquals($genre->id, $response->id());
+        $this->assertEquals($genre->name, $response->name);
         $this->assertTrue($response->isActive);
     }
 
@@ -143,7 +143,7 @@ class GenreEloquentRepositoryTest extends TestCase
         $response = $this->repository->paginate();
 
         $this->assertCount(15, $response->items());
-        $this->assertEquals(60,$response->total());
+        $this->assertEquals(60, $response->total());
 
     }
 
@@ -152,7 +152,7 @@ class GenreEloquentRepositoryTest extends TestCase
         $response = $this->repository->paginate();
 
         $this->assertCount(0, $response->items());
-        $this->assertEquals(0,$response->total());
+        $this->assertEquals(0, $response->total());
 
     }
 
@@ -171,9 +171,9 @@ class GenreEloquentRepositoryTest extends TestCase
 
         $response = $this->repository->update($entity);
 
-        $this->assertEquals('Name Updated',$response->name);
+        $this->assertEquals('Name Updated', $response->name);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'name' => 'Name Updated'
         ]);
     }
@@ -188,11 +188,33 @@ class GenreEloquentRepositoryTest extends TestCase
         $this->expectExceptionMessage("Genre $entity->id not found");
 
 
-
         $entity->update(name: 'Name Updated');
 
         $this->repository->update($entity);
+    }
 
+    public function test_delete_not_found()
+    {
+
+        $id = 'fake_id';
+
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage("Genre $id not found");
+
+        $this->repository->delete($id);
+    }
+
+    public function test_delete()
+    {
+        $genre = Model::factory()->create();
+
+        $response = $this->repository->delete($genre->id);
+
+        $this->assertSoftDeleted('genres', [
+            'id' => $genre->id,
+        ]);
+
+        $this->assertTrue($response);
     }
 
 }
