@@ -142,4 +142,29 @@ class GenreApiTest extends TestCase
 
     }
 
+
+    public function test_update_validations()
+    {
+
+        $response = $this->putJson("$this->endpoint/fake_id", [
+            'name' => 'new name to update',
+            'categories_ids' => [],
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $response->assertJsonStructure([
+            'message',
+            'errors' => [
+                'categories_ids'
+            ]
+        ]);
+
+    }
+
+    public function test_delete_not_found()
+    {
+
+    }
+
 }
