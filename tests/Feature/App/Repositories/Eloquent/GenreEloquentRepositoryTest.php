@@ -84,7 +84,7 @@ class GenreEloquentRepositoryTest extends TestCase
     {
         $genreId = 'fake_id';
         $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('Genre fake_id not found');
+        $this->expectExceptionMessage("Genre $genreId not found");
 
         $this->repository->findById($genreId);
     }
@@ -99,6 +99,41 @@ class GenreEloquentRepositoryTest extends TestCase
         $this->assertEquals($genre->id,$response->id());
         $this->assertEquals($genre->name,$response->name);
         $this->assertTrue($response->isActive);
-
     }
+
+    public function test_find_all()
+    {
+        $genres = Model::factory()->count(10)->create();
+
+        $genresDb = $this->repository->findAll();
+
+        $this->assertCount(count($genres), $genresDb);
+    }
+
+    public function test_find_all_empty()
+    {
+        $genresDb = $this->repository->findAll();
+
+        $this->assertCount(0, $genresDb);
+    }
+
+    public function test_find_all_with_filter()
+    {
+        Model::factory()->count(10)->create([
+            'name' => 'Teste'
+        ]);
+
+        Model::factory()->count(10)->create();
+
+        $genresDb = $this->repository->findAll(
+            filter: 'Teste'
+        );
+
+        $this->assertCount(10, $genresDb);
+
+        $genresDb = $this->repository->findAll();
+
+        $this->assertCount(20, $genresDb);
+    }
+
 }
