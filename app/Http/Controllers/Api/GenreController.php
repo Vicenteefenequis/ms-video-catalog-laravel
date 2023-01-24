@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGenre;
 use App\Http\Requests\UpdateGenre;
 use App\Http\Resources\GenreResource;
+use Core\UseCase\DTO\Category\DeleteCategory\DeleteCategoryInputDto;
 use Core\UseCase\DTO\Genre\Create\GenreCreateInputDto;
 use Core\UseCase\DTO\Genre\GenreInputDto;
 use Core\UseCase\DTO\Genre\List\ListGenresInputDto;
 use Core\UseCase\DTO\Genre\Update\GenreUpdateInputDto;
 use Core\UseCase\Genre\CreateGenreUseCase;
+use Core\UseCase\Genre\DeleteGenreUseCase;
 use Core\UseCase\Genre\ListGenresUseCase;
 use Core\UseCase\Genre\ListGenreUseCase;
 use Core\UseCase\Genre\UpdateGenreUseCase;
@@ -49,13 +51,15 @@ class GenreController extends Controller
      */
     public function store(StoreGenre $request, CreateGenreUseCase $useCase)
     {
+
         $response = $useCase->execute(
             input: new GenreCreateInputDto(
                 name: $request->name,
                 categoriesId: $request->categories_ids,
-                isActive: $request->is_active
+                isActive: (bool)$request->is_active
             )
         );
+
 
         return (new GenreResource($response))->response()->setStatusCode(Response::HTTP_CREATED);
     }
@@ -85,7 +89,7 @@ class GenreController extends Controller
      */
     public function update(UpdateGenre $request, UpdateGenreUseCase $useCase, $id)
     {
-       $response = $useCase->execute(
+        $response = $useCase->execute(
             input: new GenreUpdateInputDto(
                 id: $id,
                 name: $request->name,
@@ -102,8 +106,10 @@ class GenreController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(DeleteGenreUseCase $useCase, $id)
     {
-        //
+        $useCase->execute(input: new GenreInputDto(id: $id));
+
+        return response()->noContent();
     }
 }

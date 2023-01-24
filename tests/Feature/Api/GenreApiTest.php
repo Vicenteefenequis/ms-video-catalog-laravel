@@ -82,6 +82,21 @@ class GenreApiTest extends TestCase
         ]);
     }
 
+    public function test_validation_store_without_is_active()
+    {
+        $categories = Category::factory()->count(2)->create();
+
+        $payload = [
+            'name' => 'any_name',
+            'categories_ids' => $categories->pluck('id')->toArray(),
+        ];
+
+        $response = $this->postJson($this->endpoint, $payload);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+
+    }
+
     public function test_show_not_found()
     {
         $response = $this->getJson("$this->endpoint/fake_id");
@@ -164,7 +179,20 @@ class GenreApiTest extends TestCase
 
     public function test_delete_not_found()
     {
+        $response = $this->deleteJson("$this->endpoint/fake_id");
 
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
+
+
+    public function test_delete()
+    {
+        $genre = Genre::factory()->create();
+
+        $response = $this->deleteJson("$this->endpoint/$genre->id");
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
 
 }
