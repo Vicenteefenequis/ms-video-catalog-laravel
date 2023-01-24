@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -24,5 +24,11 @@ class Category extends Model
         'id' => 'string',
         'is_active' => 'boolean',
     ];
+
+
+    public function genre()
+    {
+        return $this->belongsToMany(Genre::class);
+    }
 
 }
