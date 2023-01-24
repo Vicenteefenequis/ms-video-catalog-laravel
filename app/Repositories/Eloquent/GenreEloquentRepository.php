@@ -85,6 +85,9 @@ class GenreEloquentRepository implements GenreRepositoryInterface
         $genreDb->update([
             'name' => $genre->name
         ]);
+        if (count($genre->categoriesId) > 0) {
+            $genreDb->categories()->sync($genre->categoriesId);
+        }
 
         $genreDb->refresh();
 
