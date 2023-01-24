@@ -30,8 +30,8 @@ class CategoryController extends Controller
             input: new CategoriesListInputDto(
                 filter: $request->get('filter', ''),
                 order: $request->get('order', 'DESC'),
-                page: (int)$request->get('page', 15),
-                totalPage: (int)$request->get('totalPage', 1),
+                page: (int)$request->get('page', 1),
+                totalPage: (int)$request->get('totalPage', 15),
             )
         );
 
