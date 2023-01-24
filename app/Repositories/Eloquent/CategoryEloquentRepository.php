@@ -15,9 +15,9 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
 
     protected $model;
 
-    public function __construct(Model $category)
+    public function __construct(Model $model)
     {
-        $this->model = $category;
+        $this->model = $model;
     }
 
     public function insert(CategoryEntity $category): CategoryEntity
