@@ -56,7 +56,7 @@ class GenreController extends Controller
             input: new GenreCreateInputDto(
                 name: $request->name,
                 categoriesId: $request->categories_ids,
-                isActive: (bool)$request->is_active
+                isActive: $request->is_active ?? true,
             )
         );
 

@@ -69,7 +69,7 @@ class PaginationPresenter implements PaginationInterface
                 $stdClass->{$key} = $value;
             }
 
-            array_push($response, $stdClass);
+            $response[] = $stdClass;
         }
 
         return $response;

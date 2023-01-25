@@ -95,6 +95,15 @@ class GenreApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED);
 
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'name',
+                'is_active'
+            ]
+        ]);
+
+
     }
 
     public function test_show_not_found()
