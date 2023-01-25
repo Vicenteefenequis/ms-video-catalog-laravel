@@ -4,6 +4,7 @@ namespace Tests\Unit\Domain\Entity;
 
 use Core\Domain\Enum\CastMemberType;
 use Core\Domain\Entity\CastMember;
+use Core\Domain\Exception\EntityValidationException;
 use Core\Domain\ValueObject\Uuid;
 use DateTime;
 use PHPUnit\Framework\TestCase;
@@ -23,17 +24,15 @@ class CastMemberUnitTest extends TestCase
             createdAt: new DateTime(date('Y-m-d H:i:s'))
         );
 
-        $this->assertEquals($uuid,$castMember->id());
-        $this->assertEquals('Name',$castMember->name);
-        $this->assertEquals(CastMemberType::ACTOR,$castMember->type);
+        $this->assertEquals($uuid, $castMember->id());
+        $this->assertEquals('Name', $castMember->name);
+        $this->assertEquals(CastMemberType::ACTOR, $castMember->type);
         $this->assertNotEmpty($castMember->createdAt());
     }
 
 
     public function test_attributes_new_entity()
     {
-
-
         $castMember = new CastMember(
             name: 'Name',
             type: CastMemberType::DIRECTOR,
@@ -41,11 +40,20 @@ class CastMemberUnitTest extends TestCase
         );
 
         $this->assertNotEmpty($castMember->id());
-        $this->assertEquals('Name',$castMember->name);
-        $this->assertEquals(CastMemberType::DIRECTOR,$castMember->type);
+        $this->assertEquals('Name', $castMember->name);
+        $this->assertEquals(CastMemberType::DIRECTOR, $castMember->type);
         $this->assertNotEmpty($castMember->createdAt());
     }
 
+    public function test_validation()
+    {
+        $this->expectException(EntityValidationException::class);
+
+        new CastMember(
+            name: 'ab',
+            type: CastMemberType::DIRECTOR
+        );
+    }
 
 
 }
