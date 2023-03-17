@@ -44,8 +44,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
 
     public function findAll(string $filter = '', $order = 'DESC'): array
     {
-        $categories = $this->model
-            ->where(function ($query) use ($filter) {
+        $categories = $this->model->where(function ($query) use ($filter) {
                 $query->where('name', 'LIKE', "%{$filter}%");
             })
             ->orderBy('id', $order)
@@ -106,7 +105,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
 
         );
 
-        ((bool)$object->is_active) ? $entity->activate() : $entity->disable();
+        ($object->is_active) ? $entity->activate() : $entity->disable();
 
         return $entity;
     }
