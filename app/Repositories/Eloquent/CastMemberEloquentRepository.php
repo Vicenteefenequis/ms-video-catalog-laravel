@@ -5,8 +5,10 @@ namespace App\Repositories\Eloquent;
 
 
 use App\Models\CastMember as Model;
+use App\Repositories\Presenters\PaginationPresenter;
 use Core\Domain\Entity\CastMember as Entity;
 use Core\Domain\Enum\CastMemberType;
+use Core\Domain\Exception\NotFoundException;
 use Core\Domain\Repository\CastMemberRepositoryInterface;
 use Core\Domain\Repository\PaginationInterface;
 use Core\Domain\ValueObject\Uuid;
@@ -33,29 +35,71 @@ class CastMemberEloquentRepository implements CastMemberRepositoryInterface
 
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function findById(string $id): Entity
     {
-        // TODO: Implement findById() method.
+
+        if (!$castMember = $this->model->find($id)) {
+            throw new NotFoundException("CastMember $id not found");
+        }
+
+        return $this->toEntity($castMember);
+
     }
 
     public function findAll(string $filter = '', $order = 'DESC'): array
     {
-        // TODO: Implement findAll() method.
+        $castMembers = $this->model
+            ->where(function ($query) use ($filter) {
+                if ($filter) {
+                    $query->where('name', 'LIKE', "%$filter%");
+                }
+            })
+            ->orderBy('name', $order)
+            ->get();
+
+        return $castMembers->toArray();
     }
 
     public function paginate(string $filter = '', $order = 'DESC', int $page = 1, int $totalPage = 15): PaginationInterface
     {
-        // TODO: Implement paginate() method.
+       $query = $this->model;
+       if($filter) {
+           $query->where('name','LIKE',"%$filter%");
+       }
+       $query->orderBy('name',$order);
+       $dbData = $query->paginate($totalPage);
+
+       return new PaginationPresenter($dbData);
     }
 
     public function update(Entity $castMember): Entity
     {
-        // TODO: Implement update() method.
+        if(!$castDb = $this->model->find($castMember->id())) {
+            throw new NotFoundException("CastMember $$castMember->id not found");
+        }
+
+        $castDb->update([
+            "name" => $castMember->name,
+        ]);
+
+        $castDb->refresh();
+
+        return $this->toEntity($castDb);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function delete(string $id): bool
     {
-        // TODO: Implement delete() method.
+        if(!$genreDb = $this->model->find($id)) {
+            throw new NotFoundException("CastMember $id not found");
+        }
+
+       return $genreDb->delete();
     }
 
     private function toEntity(Model $model): Entity
