@@ -24,7 +24,7 @@ class CastMemberFactory extends Factory
         return [
             'id' => (string) Str::uuid(),
             'name' => $this->faker->name(),
-            'type' => $this[array_rand($types)]
+            'type' => $types[array_rand($types)]
         ];
     }
 }
