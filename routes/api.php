@@ -13,6 +13,11 @@ Route::apiResource(
     controller: GenreController::class
 );
 
+Route::apiResource(
+    name: '/cast_members',
+    controller: CastMemberController::class
+);
+
 Route::get('/', function () {
     return response()->json(['message' => 'success']);
 });
