@@ -16,7 +16,7 @@ class CastMemberApiTest extends TestCase
         $response = $this->getJson($this->endpoint);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(0,'data');
+        $response->assertJsonCount(0, 'data');
     }
 
     public function test_get_all()
@@ -26,7 +26,7 @@ class CastMemberApiTest extends TestCase
         $response = $this->getJson($this->endpoint);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(15,'data');
+        $response->assertJsonCount(15, 'data');
         $response->assertJsonStructure([
             "meta" => [
                 'total',
@@ -47,9 +47,9 @@ class CastMemberApiTest extends TestCase
         $response = $this->getJson("$this->endpoint?page=2");
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(5,'data');
-        $this->assertEquals(20,$response['meta']['total']);
-        $this->assertEquals(2,$response['meta']['current_page']);
+        $response->assertJsonCount(5, 'data');
+        $this->assertEquals(20, $response['meta']['total']);
+        $this->assertEquals(2, $response['meta']['current_page']);
     }
 
     public function test_pagination_with_filter()
@@ -61,6 +61,29 @@ class CastMemberApiTest extends TestCase
 
         $response = $this->getJson("$this->endpoint?filter=test");
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(10,'data');
+        $response->assertJsonCount(10, 'data');
     }
+
+    public function test_show_not_found()
+    {
+        $response = $this->getJson("$this->endpoint/fake_id");
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_show()
+    {
+        $cast_member = CastMember::factory()->create();
+        $response = $this->getJson("$this->endpoint/$cast_member->id");
+        $response->assertStatus(Response::HTTP_OK);
+
+        $response->assertJsonStructure([
+            "data" => [
+                'id',
+                'name',
+                'type',
+                'created_at',
+            ]
+        ]);
+    }
+
 }
