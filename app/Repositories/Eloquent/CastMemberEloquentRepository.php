@@ -65,19 +65,19 @@ class CastMemberEloquentRepository implements CastMemberRepositoryInterface
 
     public function paginate(string $filter = '', $order = 'DESC', int $page = 1, int $totalPage = 15): PaginationInterface
     {
-       $query = $this->model;
-       if($filter) {
-           $query->where('name','LIKE',"%$filter%");
-       }
-       $query->orderBy('name',$order);
-       $dbData = $query->paginate($totalPage);
+        $query = $this->model;
+        if ($filter) {
+            $query = $query->where('name', 'LIKE', "%$filter%");
+        }
+        $query = $query->orderBy('name', $order);
+        $dbData = $query->paginate($totalPage);
 
-       return new PaginationPresenter($dbData);
+        return new PaginationPresenter($dbData);
     }
 
     public function update(Entity $castMember): Entity
     {
-        if(!$castDb = $this->model->find($castMember->id())) {
+        if (!$castDb = $this->model->find($castMember->id())) {
             throw new NotFoundException("CastMember $$castMember->id not found");
         }
 
@@ -95,11 +95,11 @@ class CastMemberEloquentRepository implements CastMemberRepositoryInterface
      */
     public function delete(string $id): bool
     {
-        if(!$genreDb = $this->model->find($id)) {
+        if (!$genreDb = $this->model->find($id)) {
             throw new NotFoundException("CastMember $id not found");
         }
 
-       return $genreDb->delete();
+        return $genreDb->delete();
     }
 
     private function toEntity(Model $model): Entity
