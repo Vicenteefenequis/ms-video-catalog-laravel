@@ -32,7 +32,7 @@ class UpdateCastMemberUseCase
             id: $updatedCastMember->id(),
             name: $updatedCastMember->name,
             type: $updatedCastMember->type->value,
-            createdAt: $updatedCastMember->createdAt()
+            created_at: $updatedCastMember->createdAt()
         );
     }
 

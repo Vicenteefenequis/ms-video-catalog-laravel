@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CastMemberController;
 
 use Core\UseCase\Category\ListCategoriesUseCase;
 use Core\UseCase\DTO\Category\ListCategories\CategoriesListOutputDto;
@@ -31,7 +31,7 @@ class CategoryControllerUnitTest extends TestCase
         $mockUseCase = Mockery::mock(ListCategoriesUseCase::class);
         $mockUseCase->shouldReceive('execute')->once()->andReturn($mockDtoOutput);
 
-        $controller = new CategoryController();
+        $controller = new CastMemberController();
         $response = $controller->index($mockRequest, $mockUseCase);
 
 
