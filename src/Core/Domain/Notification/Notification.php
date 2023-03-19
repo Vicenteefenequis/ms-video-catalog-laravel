@@ -16,4 +16,11 @@ class Notification
     {
         $this->errors[] = $error;
     }
+
+    public function hasErrors():bool
+    {
+        return count($this->errors) > 0;
+    }
+
+
 }
