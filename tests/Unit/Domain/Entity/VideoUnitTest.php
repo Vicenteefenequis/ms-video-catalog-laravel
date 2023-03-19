@@ -7,6 +7,7 @@ use Core\Domain\Enum\Rating;
 use Core\Domain\ValueObject\Uuid;
 use Tests\TestCase;
 use Ramsey\Uuid\Uuid as RamseyUuid;
+use DateTime;
 
 class VideoUnitTest extends TestCase
 {
@@ -21,7 +22,8 @@ class VideoUnitTest extends TestCase
             opened: false,
             rating: Rating::RATE12,
             id: new Uuid($uuid),
-            published: false
+            published: false,
+            createdAt: new DateTime(date('Y-m-d H:i:s'))
         );
 
         $this->assertEquals($uuid,$entity->id());
@@ -32,6 +34,7 @@ class VideoUnitTest extends TestCase
         $this->assertFalse($entity->opened);
         $this->assertEquals(Rating::RATE12,$entity->rating);
         $this->assertFalse($entity->published);
+        $this->assertNotNull($entity->createdAt());
     }
 
     public function test_add_category()
