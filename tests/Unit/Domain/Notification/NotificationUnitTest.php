@@ -48,4 +48,47 @@ class NotificationUnitTest extends TestCase
         $this->assertTrue($notification->hasErrors());
     }
 
+    public function test_message()
+    {
+        $notification = new Notification();
+        $notification->addError([
+            'context' => 'video',
+            'message' => 'title is required'
+        ]);
+        $notification->addError([
+            'context' => 'video',
+            'message' => 'description is required'
+        ]);
+
+
+        $message = $notification->messages();
+        $this->assertIsString($message);
+        $this->assertEquals(
+            'video: title is required,video: description is required,',
+            $message
+        );
+    }
+
+    public function test_message_filter_context()
+    {
+        $notification = new Notification();
+        $notification->addError([
+            'context' => 'video',
+            'message' => 'title is required'
+        ]);
+        $notification->addError([
+            'context' => 'category',
+            'message' => 'name is required'
+        ]);
+
+        $this->assertCount(2, $notification->getErrors());
+        $message = $notification->messages(
+            context: 'video'
+        );
+        $this->assertIsString($message);
+        $this->assertEquals(
+            'video: title is required,',
+            $message
+        );
+    }
 }
