@@ -31,9 +31,12 @@ class CreateVideoUseCaseUnitTest extends TestCase
      *
      * @return void
      */
-    public function test_constructor()
+
+    protected $useCase;
+
+    protected function setUp(): void
     {
-        new UseCase(
+        $this->useCase = new UseCase(
             repository: $this->createMockRepository(),
             transaction: $this->createMockTransaction(),
             storage: $this->createMockFileStorage(),
@@ -42,22 +45,14 @@ class CreateVideoUseCaseUnitTest extends TestCase
             repositoryGenre: $this->createMockGenreRepository(),
             repositoryCastMember: $this->createMockCastMemberRepository()
         );
-        $this->assertTrue(true);
+
+        parent::setUp(); 
     }
 
     public function test_exec_input_output()
     {
-        $useCase = new UseCase(
-            repository: $this->createMockRepository(),
-            transaction: $this->createMockTransaction(),
-            storage: $this->createMockFileStorage(),
-            eventManager: $this->createMockEventManager(),
-            repositoryCategory: $this->createMockCategoryRepository(),
-            repositoryGenre: $this->createMockGenreRepository(),
-            repositoryCastMember: $this->createMockCastMemberRepository()
-        );
 
-        $response = $useCase->execute(
+        $response = $this->useCase->execute(
             input: $this->createMockInputDTO()
         );
 
