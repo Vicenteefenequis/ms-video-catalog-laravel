@@ -4,7 +4,8 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Category as Model;
 use App\Repositories\Presenters\PaginationPresenter;
-use Core\Domain\Entity\Category as CategoryEntity;
+use Core\Domain\Entity\Category;
+use Core\Domain\Entity\Entity;
 use Core\Domain\Exception\NotFoundException;
 use Core\Domain\Repository\CategoryRepositoryInterface;
 use Core\Domain\Repository\PaginationInterface;
@@ -20,7 +21,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
         $this->model = $model;
     }
 
-    public function insert(CategoryEntity $category): CategoryEntity
+    public function insert(Entity $category): Entity
     {
         $category = $this->model->create([
             'id' => $category->id(),
@@ -33,7 +34,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
         return $this->toCategory($category);
     }
 
-    public function findById(string $id): CategoryEntity
+    public function findById(string $id): Entity
     {
         if (!$category = $this->model->find($id)) {
             throw new NotFoundException();
@@ -45,8 +46,8 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
     public function findAll(string $filter = '', $order = 'DESC'): array
     {
         $categories = $this->model->where(function ($query) use ($filter) {
-                $query->where('name', 'LIKE', "%{$filter}%");
-            })
+            $query->where('name', 'LIKE', "%{$filter}%");
+        })
             ->orderBy('id', $order)
             ->get();
 
@@ -68,7 +69,7 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
         return new PaginationPresenter($paginator);
     }
 
-    public function update(CategoryEntity $category): CategoryEntity
+    public function update(Entity $category): Entity
     {
 
         if (!$categoryDb = $this->model->find($category->id())) {
@@ -96,9 +97,9 @@ class CategoryEloquentRepository implements CategoryRepositoryInterface
         return $categoryDb->delete();
     }
 
-    private function toCategory(object $object): CategoryEntity
+    private function toCategory(object $object): Entity
     {
-        $entity = new CategoryEntity(
+        $entity = new Category(
             id: $object->id,
             name: $object->name,
             description: $object->description,
