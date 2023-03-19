@@ -2,18 +2,16 @@
 
 namespace Core\Domain\Entity;
 
-use Core\Domain\Entity\Traits\MethodsMagicsTrait;
 use Core\Domain\Enum\Rating;
 use Core\Domain\Exception\EntityValidationException;
-use Core\Domain\Notification\Notification;
+use Core\Domain\Notification\NotificationException;
 use Core\Domain\ValueObject\Image;
 use Core\Domain\ValueObject\Media;
 use Core\Domain\ValueObject\Uuid;
 use DateTime;
 
-class Video
+class Video extends Entity
 {
-    use MethodsMagicsTrait;
 
     protected array $categoriesId = [];
     protected array $genresId = [];
@@ -37,6 +35,7 @@ class Video
         protected ?Media    $videoFile = null,
     )
     {
+        parent::__construct();
         $this->id = $this->id ?? Uuid::random();
         $this->createdAt = $this->createdAt ?? new DateTime();
         $this->validation();
@@ -105,31 +104,30 @@ class Video
 
     protected function validation()
     {
-        $notification = new Notification();
 
         if (empty($this->title)) {
-            $notification->addError([
+            $this->notification->addError([
                 'context' => 'video',
                 'message' => 'Should not be empty or null'
             ]);
         }
 
         if (strlen($this->title) < 3) {
-            $notification->addError([
+            $this->notification->addError([
                 'context' => 'video',
                 'message' => 'Invalid quantity'
             ]);
         }
 
         if (strlen($this->description) < 3) {
-            $notification->addError([
+            $this->notification->addError([
                 'context' => 'video',
                 'message' => 'Invalid quantity'
             ]);
         }
 
-        if ($notification->hasErrors()) {
-            throw new EntityValidationException($notification->messages('video'));
+        if ($this->notification->hasErrors()) {
+            throw new NotificationException($this->notification->messages('video'));
         }
     }
 }
