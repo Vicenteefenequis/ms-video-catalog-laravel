@@ -30,6 +30,7 @@ class Video
         protected ?DateTime $createdAt = null,
         protected ?Image    $thumbFile = null,
         protected ?Image    $thumbHalf = null,
+        protected ?Image    $bannerFile = null,
         protected ?Media    $trailerFile = null,
         protected ?Media    $videoFile = null,
     )
@@ -82,6 +83,11 @@ class Video
     public function thumbHalf(): ?Image
     {
         return $this->thumbHalf;
+    }
+
+    public function bannerFile(): ?Image
+    {
+        return $this->bannerFile;
     }
 
     public function trailerFile(): ?Media

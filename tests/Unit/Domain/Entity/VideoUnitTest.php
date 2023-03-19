@@ -283,4 +283,26 @@ class VideoUnitTest extends TestCase
         $this->assertEquals(MediaStatus::COMPLETE,$entity->videoFile()->mediaStatus);
     }
 
+
+    public function test_value_object_image_to_banner_file()
+    {
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false,
+            bannerFile: new Image(
+                path: "any_path/banner.png"
+            )
+        );
+
+
+        $this->assertNotNull($entity->bannerFile()->getPath());
+        $this->assertInstanceOf(Image::class, $entity->bannerFile());
+        $this->assertEquals('any_path/banner.png', $entity->bannerFile()->getPath());
+    }
+
 }
