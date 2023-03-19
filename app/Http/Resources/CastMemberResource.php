@@ -16,9 +16,9 @@ class CastMemberResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $request->id,
-            'name' => $request->name,
-            'type' => $request->type,
+            'id' => $this->id,
+            'name' => $this->name,
+            'type' => $this->type,
             'created_at' => Carbon::make($this->created_at)->format('Y-m-d H:i:s'),
         ];
     }
