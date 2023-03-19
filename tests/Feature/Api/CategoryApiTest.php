@@ -205,7 +205,7 @@ class CategoryApiTest extends TestCase
     {
         $category = Category::factory()->create();
 
-        $response = $this->deleteJson("$this->endpoint/{$category->id}");
+        $response = $this->deleteJson("$this->endpoint/$category->id");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 

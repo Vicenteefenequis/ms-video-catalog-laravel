@@ -1,12 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\{
-    CastMemberController,
-    GenreController
-};
+use App\Http\Controllers\Api\{CastMemberController, CategoryController, GenreController};
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('/categories', CastMemberController::class);
+Route::apiResource('/categories', CategoryController::class);
 
 Route::apiResource(
     name: '/genres',

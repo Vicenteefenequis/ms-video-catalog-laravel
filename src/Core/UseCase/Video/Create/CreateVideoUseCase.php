@@ -5,15 +5,21 @@ namespace Core\UseCase\Video\Create;
 use Core\Domain\Entity\Video as Entity;
 use Core\Domain\Events\VideoCreatedEvent;
 use Core\Domain\Exception\NotFoundException;
-use Core\Domain\Repository\CastMemberRepositoryInterface;
-use Core\Domain\Repository\CategoryRepositoryInterface;
-use Core\Domain\Repository\GenreRepositoryInterface;
-use Core\Domain\Repository\VideoRepositoryInterface;
-use Core\UseCase\Interface\EventManagerInterface;
-use Core\UseCase\Interface\FileStorageInterface;
-use Core\UseCase\Interface\TransactionInterface;
-use Core\UseCase\Video\Create\DTO\CreateInputVideoDTO;
-use Core\UseCase\Video\Create\DTO\CreateOutputVideoDTO;
+use Core\Domain\Repository\{
+    CastMemberRepositoryInterface,
+    CategoryRepositoryInterface,
+    VideoRepositoryInterface,
+    GenreRepositoryInterface
+};
+use Core\UseCase\Interface\{
+    EventManagerInterface,
+    FileStorageInterface,
+    TransactionInterface
+};
+use Core\UseCase\Video\Create\DTO\{
+    CreateInputVideoDTO,
+    CreateOutputVideoDTO
+};
 use Throwable;
 
 class CreateVideoUseCase
@@ -26,7 +32,7 @@ class CreateVideoUseCase
         protected CategoryRepositoryInterface   $repositoryCategory,
         protected GenreRepositoryInterface      $repositoryGenre,
         protected CastMemberRepositoryInterface $repositoryCastMember,
-    ) { }
+    ) {}
 
 
     public function execute(CreateInputVideoDTO $input): CreateOutputVideoDTO
@@ -45,7 +51,7 @@ class CreateVideoUseCase
             // $eventManager
             $this->transaction->commit();
 
-            return new CreateOutputVideoDTO();
+            return $this->output($entity);
 
         } catch (Throwable $th) {
             $this->transaction->rollback();
@@ -101,13 +107,13 @@ class CreateVideoUseCase
     {
         $categoriesDb = $this->repositoryCategory->getIdsListIds($categoriesId);
 
-        $arrayDiff = array_diff($categoriesId,$categoriesDb);
+        $arrayDiff = array_diff($categoriesId, $categoriesDb);
 
-        if(count($arrayDiff)) {
+        if (count($arrayDiff)) {
             $msg = sprintf(
                 '%s %s not found',
                 count($arrayDiff) > 1 ? 'Categories' : 'Category',
-                implode(', ',$arrayDiff)
+                implode(', ', $arrayDiff)
             );
 
             throw new NotFoundException($msg);
@@ -118,13 +124,13 @@ class CreateVideoUseCase
     {
         $genresDb = $this->repositoryGenre->getIdsListIds($genresId);
 
-        $arrayDiff = array_diff($genresId,$genresDb);
+        $arrayDiff = array_diff($genresId, $genresDb);
 
-        if(count($arrayDiff)) {
+        if (count($arrayDiff)) {
             $msg = sprintf(
                 '%s %s not found',
                 count($arrayDiff) > 1 ? 'Genres' : 'Genre',
-                implode(', ',$arrayDiff)
+                implode(', ', $arrayDiff)
             );
 
             throw new NotFoundException($msg);
@@ -135,17 +141,37 @@ class CreateVideoUseCase
     {
         $castMemberDb = $this->repositoryCastMember->getIdsListIds($castMembersId);
 
-        $arrayDiff = array_diff($castMembersId,$castMemberDb);
+        $arrayDiff = array_diff($castMembersId, $castMemberDb);
 
-        if(count($arrayDiff)) {
+        if (count($arrayDiff)) {
             $msg = sprintf(
                 '%s %s not found',
                 count($arrayDiff) > 1 ? 'CastMembers' : 'CastMember',
-                implode(', ',$arrayDiff)
+                implode(', ', $arrayDiff)
             );
 
             throw new NotFoundException($msg);
         }
     }
 
+    private function output(Entity $entity): CreateOutputVideoDTO
+    {
+        return new CreateOutputVideoDTO(
+            id: $entity->id(),
+            title: $entity->title,
+            description: $entity->description,
+            yearLaunched: $entity->yearLaunched,
+            duration: $entity->duration,
+            opened: $entity->opened,
+            rating: $entity->rating->value,
+            categories: $entity->categoriesId,
+            genres: $entity->genresId,
+            castMembers: $entity->castMembersId,
+            videoFile: $entity->videoFile()?->filePath,
+            trailerFile: $entity->trailerFile()?->filePath,
+            thumbFile: $entity->thumbFile()?->getPath(),
+            thumbHalf: $entity->thumbHalf()?->getPath(),
+            bannerFile: $entity->bannerFile()?->getPath(),
+        );
+    }
 }

@@ -2,14 +2,16 @@
 
 namespace Domain\Entity;
 
-use Core\Domain\Enum\MediaStatus;
 use Core\Domain\Notification\NotificationException;
 use Core\Domain\ValueObject\{
     Image,
     Media
 };
 use Core\Domain\Entity\Video;
-use Core\Domain\Enum\Rating;
+use Core\Domain\Enum\{
+    Rating,
+    MediaStatus
+};
 use Core\Domain\ValueObject\Uuid;
 use Tests\TestCase;
 use Ramsey\Uuid\Uuid as RamseyUuid;
