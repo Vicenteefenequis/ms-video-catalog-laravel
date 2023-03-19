@@ -156,4 +156,23 @@ class CastMemberApiTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
     }
 
+    public function test_delete_not_found()
+    {
+        $response = $this->deleteJson("$this->endpoint/any_id");
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_delete()
+    {
+        $cast_member = CastMember::factory()->create();
+
+        $response = $this->deleteJson("$this->endpoint/$cast_member->id");
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->assertSoftDeleted('cast_members',[
+            "id" => $cast_member->id,
+        ]);
+    }
+
+
 }
