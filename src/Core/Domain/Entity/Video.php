@@ -4,6 +4,7 @@ namespace Core\Domain\Entity;
 
 use Core\Domain\Entity\Traits\MethodsMagicsTrait;
 use Core\Domain\Enum\Rating;
+use Core\Domain\ValueObject\Image;
 use Core\Domain\ValueObject\Uuid;
 use DateTime;
 
@@ -17,15 +18,16 @@ class Video
     protected array $castMembersId = [];
 
     public function __construct(
-        protected string $title,
-        protected string $description,
-        protected int    $yearLaunched,
-        protected int    $duration,
-        protected bool   $opened,
-        protected Rating $rating,
-        protected ?Uuid  $id = null,
-        protected bool   $published = false,
+        protected string    $title,
+        protected string    $description,
+        protected int       $yearLaunched,
+        protected int       $duration,
+        protected bool      $opened,
+        protected Rating    $rating,
+        protected ?Uuid     $id = null,
+        protected bool      $published = false,
         protected ?DateTime $createdAt = null,
+        protected ?Image    $thumbFile = null,
     )
     {
         $this->id = $this->id ?? Uuid::random();
@@ -66,5 +68,10 @@ class Video
         $this->castMembersId = array_filter($this->castMembersId, function ($search) use ($castMemberId) {
             return $search != $castMemberId;
         });
+    }
+
+    public function thumbFile(): ?Image
+    {
+        return $this->thumbFile;
     }
 }
