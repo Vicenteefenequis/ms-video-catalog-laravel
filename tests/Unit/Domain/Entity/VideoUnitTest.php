@@ -3,7 +3,7 @@
 namespace Domain\Entity;
 
 use Core\Domain\Enum\MediaStatus;
-use Core\Domain\Exception\EntityValidationException;
+use Core\Domain\Notification\NotificationException;
 use Core\Domain\ValueObject\{
     Image,
     Media
@@ -306,9 +306,9 @@ class VideoUnitTest extends TestCase
         $this->assertEquals('any_path/banner.png', $entity->bannerFile()->getPath());
     }
 
-    public function test_validations()
+    public function test_notification_exception()
     {
-        $this->expectException(EntityValidationException::class);
+        $this->expectException(NotificationException::class);
         new Video(
             title: "ne",
             description: "de",
