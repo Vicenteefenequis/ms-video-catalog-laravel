@@ -46,7 +46,7 @@ class CreateVideoUseCaseUnitTest extends TestCase
             repositoryCastMember: $this->createMockCastMemberRepository()
         );
 
-        parent::setUp(); 
+        parent::setUp();
     }
 
     public function test_exec_input_output()
