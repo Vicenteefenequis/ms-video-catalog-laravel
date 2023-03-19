@@ -34,4 +34,106 @@ class VideoUnitTest extends TestCase
         $this->assertFalse($entity->published);
     }
 
+    public function test_add_category()
+    {
+        $categoryId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+        $this->assertCount(0,$entity->categoriesId);
+
+        $entity->addCategoryId($categoryId);
+
+        $this->assertCount(1,$entity->categoriesId);
+
+        $entity->addCategoryId($categoryId);
+
+        $this->assertCount(2,$entity->categoriesId);
+    }
+
+    public function test_remove_category()
+    {
+        $categoryId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+
+        $entity->addCategoryId($categoryId);
+
+        $entity->addCategoryId("any_category_id");
+
+        $this->assertCount(2,$entity->categoriesId);
+
+        $entity->removeCategoryId($categoryId);
+
+        $this->assertCount(1,$entity->categoriesId);
+    }
+
+    public function test_add_genre()
+    {
+        $genreId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+        $this->assertCount(0,$entity->genresId);
+
+        $entity->addGenreId($genreId);
+
+        $this->assertCount(1,$entity->genresId);
+
+        $entity->addGenreId($genreId);
+
+        $this->assertCount(2,$entity->genresId);
+    }
+
+
+    public function test_remove_genre()
+    {
+        $genreId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+
+        $entity->addGenreId($genreId);
+        $entity->addGenreId("any_id");
+
+        $this->assertCount(2,$entity->genresId);
+
+        $entity->removeGenreId($genreId);
+
+        $this->assertCount(1,$entity->genresId);
+    }
+
 }
