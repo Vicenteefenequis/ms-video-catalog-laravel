@@ -99,4 +99,25 @@ class CastMemberApiTest extends TestCase
         ]);
     }
 
+    public function test_store()
+    {
+        $response = $this->postJson($this->endpoint, [
+            "name" => "test",
+            "type" => 1
+        ]);
+        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertJsonStructure([
+            "data" => [
+                "id",
+                "name",
+                "type",
+                "created_at"
+            ]
+        ]);
+
+        $this->assertDatabaseHas('cast_members',[
+            "name" => "test"
+        ]);
+    }
+
 }
