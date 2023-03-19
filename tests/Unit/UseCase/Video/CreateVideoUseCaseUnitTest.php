@@ -4,12 +4,20 @@ namespace Tests\Unit\UseCase\Video;
 
 use Core\Domain\Entity\Video as Entity;
 use Core\Domain\Enum\Rating;
-use Core\Domain\Repository\VideoRepositoryInterface;
+use Core\Domain\Repository\{
+    CastMemberRepositoryInterface,
+    CategoryRepositoryInterface,
+    GenreRepositoryInterface,
+    VideoRepositoryInterface
+};
 use Core\UseCase\Video\Create\DTO\{
     CreateOutputVideoDTO,
     CreateInputVideoDTO
 };
-use Core\UseCase\Interface\{FileStorageInterface, TransactionInterface};
+use Core\UseCase\Interface\{
+    FileStorageInterface,
+    TransactionInterface
+};
 use Core\UseCase\Video\Create\CreateVideoUseCase as UseCase;
 use Core\UseCase\Video\Interface\VideoEventManagerInterface;
 use Mockery;
@@ -29,7 +37,10 @@ class CreateVideoUseCaseUnitTest extends TestCase
             repository: $this->createMockRepository(),
             transaction: $this->createMockTransaction(),
             storage: $this->createMockFileStorage(),
-            eventManager: $this->createMockEventManager()
+            eventManager: $this->createMockEventManager(),
+            repositoryCategory: $this->createMockCategoryRepository(),
+            repositoryGenre: $this->createMockGenreRepository(),
+            repositoryCastMember: $this->createMockCastMemberRepository()
         );
         $this->assertTrue(true);
     }
@@ -40,7 +51,10 @@ class CreateVideoUseCaseUnitTest extends TestCase
             repository: $this->createMockRepository(),
             transaction: $this->createMockTransaction(),
             storage: $this->createMockFileStorage(),
-            eventManager: $this->createMockEventManager()
+            eventManager: $this->createMockEventManager(),
+            repositoryCategory: $this->createMockCategoryRepository(),
+            repositoryGenre: $this->createMockGenreRepository(),
+            repositoryCastMember: $this->createMockCastMemberRepository()
         );
 
         $response = $useCase->execute(
@@ -57,6 +71,29 @@ class CreateVideoUseCaseUnitTest extends TestCase
         $mockRepository->shouldReceive('insert')->andReturn($this->createMockEntity());
         return $mockRepository;
     }
+
+
+    private function createMockCategoryRepository(array $categoriesResponse = [])
+    {
+        $mockRepository = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
+        $mockRepository->shouldReceive('getIdsListIds')->andReturn($categoriesResponse);
+        return $mockRepository;
+    }
+
+    private function createMockGenreRepository(array $genreResponse = [])
+    {
+        $mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
+        $mockRepository->shouldReceive('getIdsListIds')->andReturn($genreResponse);
+        return $mockRepository;
+    }
+
+    private function createMockCastMemberRepository(array $castMembersResponse = [])
+    {
+        $mockRepository = Mockery::mock(stdClass::class, CastMemberRepositoryInterface::class);
+        $mockRepository->shouldReceive('getIdsListIds')->andReturn($castMembersResponse);
+        return $mockRepository;
+    }
+
 
     private function createMockTransaction()
     {
@@ -89,6 +126,9 @@ class CreateVideoUseCaseUnitTest extends TestCase
             12,
             false,
             Rating::RATE12,
+            [],
+            [],
+            []
         ]);
     }
 
