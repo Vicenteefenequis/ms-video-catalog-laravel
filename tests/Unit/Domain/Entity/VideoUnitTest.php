@@ -3,6 +3,7 @@
 namespace Domain\Entity;
 
 use Core\Domain\Enum\MediaStatus;
+use Core\Domain\Exception\EntityValidationException;
 use Core\Domain\ValueObject\{
     Image,
     Media
@@ -256,10 +257,10 @@ class VideoUnitTest extends TestCase
             trailerFile: $trailerFile
         );
         $this->assertNotNull($entity->trailerFile());
-        $this->assertInstanceOf(Media::class,$entity->trailerFile());
-        $this->assertEquals('path/video.mp4',$entity->trailerFile()->filePath);
-        $this->assertEquals(MediaStatus::PENDING,$entity->trailerFile()->mediaStatus);
-        $this->assertEquals('path/encoded.extension',$entity->trailerFile()->encodedPath);
+        $this->assertInstanceOf(Media::class, $entity->trailerFile());
+        $this->assertEquals('path/video.mp4', $entity->trailerFile()->filePath);
+        $this->assertEquals(MediaStatus::PENDING, $entity->trailerFile()->mediaStatus);
+        $this->assertEquals('path/encoded.extension', $entity->trailerFile()->encodedPath);
     }
 
     public function test_value_object_media_video_file()
@@ -278,9 +279,9 @@ class VideoUnitTest extends TestCase
             videoFile: $videoFile
         );
         $this->assertNotNull($entity->videoFile());
-        $this->assertInstanceOf(Media::class,$entity->videoFile());
-        $this->assertEquals('path/video.mp4',$entity->videoFile()->filePath);
-        $this->assertEquals(MediaStatus::COMPLETE,$entity->videoFile()->mediaStatus);
+        $this->assertInstanceOf(Media::class, $entity->videoFile());
+        $this->assertEquals('path/video.mp4', $entity->videoFile()->filePath);
+        $this->assertEquals(MediaStatus::COMPLETE, $entity->videoFile()->mediaStatus);
     }
 
 
@@ -303,6 +304,19 @@ class VideoUnitTest extends TestCase
         $this->assertNotNull($entity->bannerFile()->getPath());
         $this->assertInstanceOf(Image::class, $entity->bannerFile());
         $this->assertEquals('any_path/banner.png', $entity->bannerFile()->getPath());
+    }
+
+    public function test_validations()
+    {
+        $this->expectException(EntityValidationException::class);
+        new Video(
+            title: "ne",
+            description: "de",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+        );
     }
 
 }
