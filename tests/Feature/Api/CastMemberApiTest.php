@@ -115,9 +115,45 @@ class CastMemberApiTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseHas('cast_members',[
+        $this->assertDatabaseHas('cast_members', [
             "name" => "test"
         ]);
+    }
+
+    public function test_update_not_found()
+    {
+        $response = $this->putJson("$this->endpoint/any_id", [
+            "name" => "test1",
+            "type" => 1
+        ]);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_update_validation()
+    {
+        $cast_member = CastMember::factory()->create();
+
+        $response = $this->putJson("$this->endpoint/$cast_member->id", [
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonStructure([
+            "message",
+            "errors" => [
+                "name"
+            ],
+        ]);
+    }
+
+    public function test_update()
+    {
+        $cast_member = CastMember::factory()->create();
+
+        $response = $this->putJson("$this->endpoint/$cast_member->id", [
+            "name" => "new name"
+        ]);
+
+        $response->assertStatus(Response::HTTP_OK);
     }
 
 }
