@@ -111,4 +111,9 @@ class CastMemberEloquentRepository implements CastMemberRepositoryInterface
             createdAt: $model->created_at
         );
     }
+
+    public function getIdsListIds(array $castMembersId = []): array
+    {
+        return $this->model->whereIn('id', $castMembersId)->pluck('id')->toArray();
+    }
 }

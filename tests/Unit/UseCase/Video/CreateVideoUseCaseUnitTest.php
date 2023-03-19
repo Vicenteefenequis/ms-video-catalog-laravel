@@ -2,14 +2,16 @@
 
 namespace Tests\Unit\UseCase\Video;
 
-use Core\UseCase\Video\Interface\VideoEventManagerInterface;
-use Core\UseCase\Interface\{
-    FileStorageInterface,
-    TransactionInterface
-};
+use Core\Domain\Entity\Video as Entity;
+use Core\Domain\Enum\Rating;
 use Core\Domain\Repository\VideoRepositoryInterface;
-use Core\UseCase\Video\CreateVideoUseCase as UseCase;
-
+use Core\UseCase\Video\Create\DTO\{
+    CreateOutputVideoDTO,
+    CreateInputVideoDTO
+};
+use Core\UseCase\Interface\{FileStorageInterface, TransactionInterface};
+use Core\UseCase\Video\Create\CreateVideoUseCase as UseCase;
+use Core\UseCase\Video\Interface\VideoEventManagerInterface;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -23,7 +25,7 @@ class CreateVideoUseCaseUnitTest extends TestCase
      */
     public function test_constructor()
     {
-        $useCase = new UseCase(
+        new UseCase(
             repository: $this->createMockRepository(),
             transaction: $this->createMockTransaction(),
             storage: $this->createMockFileStorage(),
@@ -32,23 +34,73 @@ class CreateVideoUseCaseUnitTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function test_exec_input_output()
+    {
+        $useCase = new UseCase(
+            repository: $this->createMockRepository(),
+            transaction: $this->createMockTransaction(),
+            storage: $this->createMockFileStorage(),
+            eventManager: $this->createMockEventManager()
+        );
+
+        $response = $useCase->execute(
+            input: $this->createMockInputDTO()
+        );
+
+
+        $this->assertInstanceOf(CreateOutputVideoDTO::class, $response);
+    }
+
     private function createMockRepository()
     {
-        return Mockery::mock(stdClass::class, VideoRepositoryInterface::class);
+        $mockRepository = Mockery::mock(stdClass::class, VideoRepositoryInterface::class);
+        $mockRepository->shouldReceive('insert')->andReturn($this->createMockEntity());
+        return $mockRepository;
     }
 
     private function createMockTransaction()
     {
-        return Mockery::mock(stdClass::class, TransactionInterface::class);
+        $mockTransaction = Mockery::mock(stdClass::class, TransactionInterface::class);
+        $mockTransaction->shouldReceive('commit');
+        $mockTransaction->shouldReceive('rollback');
+        return $mockTransaction;
     }
 
     private function createMockFileStorage()
     {
-        return Mockery::mock(stdClass::class, FileStorageInterface::class);
+        $mockFileStorage = Mockery::mock(stdClass::class, FileStorageInterface::class);
+        $mockFileStorage->shouldReceive('store')->andReturn('path/file.png');
+        return $mockFileStorage;
     }
 
     private function createMockEventManager()
     {
-        return Mockery::mock(stdClass::class, VideoEventManagerInterface::class);
+        $mockEventManager = Mockery::mock(stdClass::class, VideoEventManagerInterface::class);
+        $mockEventManager->shouldReceive('dispatch');
+        return $mockEventManager;
+    }
+
+    private function createMockInputDTO()
+    {
+        return Mockery::mock(CreateInputVideoDTO::class, [
+            'title',
+            'desc',
+            2023,
+            12,
+            false,
+            Rating::RATE12,
+        ]);
+    }
+
+    private function createMockEntity()
+    {
+        return Mockery::mock(Entity::class, [
+            'title',
+            'desc',
+            2023,
+            12,
+            false,
+            Rating::RATE12,
+        ]);
     }
 }

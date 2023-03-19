@@ -117,4 +117,9 @@ class GenreEloquentRepository implements GenreRepositoryInterface
 
         return $entity;
     }
+
+    public function getIdsListIds(array $genresId = []): array
+    {
+        return $this->model->whereIn('id', $genresId)->pluck('id')->toArray();
+    }
 }
