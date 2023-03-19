@@ -13,6 +13,8 @@ class Video
     protected array $categoriesId = [];
     protected array $genresId = [];
 
+    protected array $castMembersId = [];
+
     public function __construct(
         protected string $title,
         protected string $description,
@@ -34,7 +36,7 @@ class Video
 
     public function removeCategoryId(string $categoryId)
     {
-        $this->categoriesId = array_filter($this->categoriesId,function ($search) use ($categoryId){
+        $this->categoriesId = array_filter($this->categoriesId, function ($search) use ($categoryId) {
             return $search != $categoryId;
         });
     }
@@ -46,8 +48,20 @@ class Video
 
     public function removeGenreId(string $genreId)
     {
-        $this->genresId = array_filter($this->genresId,function ($search) use ($genreId){
+        $this->genresId = array_filter($this->genresId, function ($search) use ($genreId) {
             return $search != $genreId;
+        });
+    }
+
+    public function addCastMemberId(string $castMemberId)
+    {
+        $this->castMembersId[] = $castMemberId;
+    }
+
+    public function removeCastMemberId(string $castMemberId)
+    {
+        $this->castMembersId = array_filter($this->castMembersId, function ($search) use ($castMemberId) {
+            return $search != $castMemberId;
         });
     }
 }

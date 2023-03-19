@@ -136,4 +136,56 @@ class VideoUnitTest extends TestCase
         $this->assertCount(1,$entity->genresId);
     }
 
+
+    public function test_add_cast_member()
+    {
+        $castMemberId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+        $this->assertCount(0,$entity->castMembersId);
+
+        $entity->addCastMemberId($castMemberId);
+
+        $this->assertCount(1,$entity->castMembersId);
+
+        $entity->addCastMemberId($castMemberId);
+
+        $this->assertCount(2,$entity->castMembersId);
+    }
+
+
+    public function test_remove_cast_members()
+    {
+        $castMemberId = (string)RamseyUuid::uuid4();
+
+        $entity = new Video(
+            title: "title",
+            description: "description",
+            yearLaunched: 2029,
+            duration: 12,
+            opened: false,
+            rating: Rating::RATE12,
+            published: false
+        );
+
+
+        $entity->addCastMemberId($castMemberId);
+        $entity->addCastMemberId("any_id");
+
+        $this->assertCount(2,$entity->castMembersId);
+
+        $entity->removeCastMemberId($castMemberId);
+
+        $this->assertCount(1,$entity->castMembersId);
+    }
+
 }
