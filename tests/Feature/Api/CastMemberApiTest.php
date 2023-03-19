@@ -86,4 +86,17 @@ class CastMemberApiTest extends TestCase
         ]);
     }
 
+    public function test_store_validation()
+    {
+        $response = $this->postJson($this->endpoint, []);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonStructure([
+            "message",
+            "errors" => [
+                "name",
+                "type"
+            ],
+        ]);
+    }
+
 }
